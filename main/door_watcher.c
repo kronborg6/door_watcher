@@ -5,7 +5,8 @@
 #include "driver/gpio.h"
 #include "hal/gpio_types.h"
 
-#define LED_GPIO 2
+#define LED_GPIO GPIO_NUM_2
+// #define LED_GPIO 2
 
 void app_main(void)
 {
