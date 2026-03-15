@@ -1,5 +1,6 @@
 #include "wifi.h"
 #include "wifi_secrets.h"
+#include "led.h"
 
 #include <string.h>
 #include <freertos/FreeRTOS.h>
@@ -21,7 +22,7 @@
 #include "lwip/dns.h"
 
 /** DEFINES **/
-#define WIFI_SUCESS 1 << 0
+#define WIFI_SUCCESS 1 << 0
 #define WIFI_FAILURE 1 << 1
 #define TCP_SUCCESS 1 << 0
 #define TCP_FAILURE 1 << 1
@@ -62,7 +63,7 @@ static void ip_event_handler(void* arg, esp_event_base_t event_base, int32_t eve
         ip_event_got_ip_t* event = (ip_event_got_ip_t*)event_data;
         ESP_LOGI(TAG, "STA IP: " IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
-        xEventGroupSetBits(wifi_event_group, WIFI_SUCESS);
+        xEventGroupSetBits(wifi_event_group, WIFI_SUCCESS );
     }
 }
 
@@ -96,7 +97,7 @@ esp_err_t connect_wifi() {
     esp_event_handler_instance_t got_ip_event_instance;
     ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
                                                         IP_EVENT_STA_GOT_IP,
-                                                        &wifi_event_handler,
+                                                        &ip_event_handler,
                                                         NULL,
                                                         &got_ip_event_instance));
 
@@ -126,18 +127,24 @@ esp_err_t connect_wifi() {
 
     /** NOW WE WAIT **/
     EventBits_t bits = xEventGroupWaitBits(wifi_event_group,
-                                           WIFI_SUCESS | WIFI_FAILURE,
+                                           WIFI_SUCCESS  | WIFI_FAILURE,
                                            pdFALSE,
                                            pdFALSE,
                                            portMAX_DELAY);
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually *happend. */
-    if (bits & WIFI_SUCESS) {
+    if (bits & WIFI_SUCCESS ) {
         ESP_LOGI(TAG, "Connected to ap");
-        status = WIFI_SUCESS;
+        rgb color = {0,255,0};
+        led_set(true, color);
+        status = WIFI_SUCCESS ;
     } else if (bits & WIFI_FAILURE) {
+        rgb color = {255,0,0};
+        led_set(true, color);
         ESP_LOGI(TAG, "Failed to connect to ap");
         status = WIFI_FAILURE;
     } else {
+        rgb color = {255,0,0};
+        led_set(true, color);
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
         status = WIFI_FAILURE;
     }

@@ -5,7 +5,7 @@
 #include "esp_err.h"
 
 /** DEFINES **/
-#define WIFI_SUCESS 1 << 0
+#define WIFI_SUCCESS 1 << 0
 #define WIFI_FAILURE 1 << 1
 #define TCP_SUCCESS 1 << 0
 #define TCP_FAILURE 1 << 1

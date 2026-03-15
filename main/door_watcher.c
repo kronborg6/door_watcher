@@ -9,12 +9,18 @@
 
 #include "nvs_flash.h"
 #include "wifi.h"
+#include "led.h"
 
 #define LED_GPIO GPIO_NUM_2
 // #define LED_GPIO 2
 
 void app_main(void)
 {
+    configure_led(8);
+
+    // rgb g = {0,255,0};
+    rgb color = {0, (255 * 80) / 255, (100 * 80) / 255};
+        led_set(true, color);
     // gpio_config_t io_conf = {
     //     .pin_bit_mask = 1ULL << LED_GPIO,
     //     .mode = GPIO_MODE_OUTPUT,
@@ -43,7 +49,7 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     status = connect_wifi();
-    if (WIFI_SUCESS != status) {
+    if (WIFI_SUCCESS != status) {
         ESP_LOGI("GG", "Failed to associate to AP, duing...");
         return;
     }
