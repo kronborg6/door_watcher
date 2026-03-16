@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "cleint.h"
 #include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
@@ -13,13 +14,34 @@
 
 #define LED_GPIO GPIO_NUM_2
 // #define LED_GPIO 2
+//
+
+void temp(void *pvParamenters) {
+    rgb_t color;
+
+    while (1) {
+        color = (rgb_t){255, 0, 0};   // red
+        // xQueueSend(color_queue, &color, portMAX_DELAY);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        color = (rgb_t){0, 255, 0};   // green
+        // xQueueSend(color_queue, &color, portMAX_DELAY);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        color = (rgb_t){0, 0, 255};   // blue
+        // xQueueSend(color_queue, &color, portMAX_DELAY);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
 
 void app_main(void)
 {
     configure_led(8);
 
+    // xTaskCreate(temp, "led_task", 2048, NULL, 5, NULL);
+
     // rgb g = {0,255,0};
-    rgb color = {0, (255 * 80) / 255, (100 * 80) / 255};
+    rgb_t color = {0, (255 * 80) / 255, (100 * 80) / 255};
         led_set(true, color);
     // gpio_config_t io_conf = {
     //     .pin_bit_mask = 1ULL << LED_GPIO,
@@ -50,7 +72,13 @@ void app_main(void)
 
     status = connect_wifi();
     if (WIFI_SUCCESS != status) {
-        ESP_LOGI("GG", "Failed to associate to AP, duing...");
+        ESP_LOGI("WIFI", "Failed to associate to AP, duing...");
+        return;
+    }
+
+    status = connect_tcp_server();
+    if (TCP_SUCCESS != status) {
+        ESP_LOGI("TCP", "Failed to connect to remote server, dying...");
         return;
     }
 }

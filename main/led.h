@@ -6,9 +6,11 @@
 
 typedef struct {
     uint8_t r,g,b;
-} rgb;
+} rgb_t;
 
-void led_set(bool on, rgb rgb);
+// QueueHandle_t color_queue = {0};
+
+void led_set(bool on, rgb_t rgb);
 
  void configure_led(uint8_t gpio);
 

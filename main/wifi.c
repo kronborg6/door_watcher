@@ -134,16 +134,16 @@ esp_err_t connect_wifi() {
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually *happend. */
     if (bits & WIFI_SUCCESS ) {
         ESP_LOGI(TAG, "Connected to ap");
-        rgb color = {0,255,0};
+        rgb_t color = {0,255,0};
         led_set(true, color);
         status = WIFI_SUCCESS ;
     } else if (bits & WIFI_FAILURE) {
-        rgb color = {255,0,0};
+        rgb_t color = {255,0,0};
         led_set(true, color);
         ESP_LOGI(TAG, "Failed to connect to ap");
         status = WIFI_FAILURE;
     } else {
-        rgb color = {255,0,0};
+        rgb_t color = {255,0,0};
         led_set(true, color);
         ESP_LOGE(TAG, "UNEXPECTED EVENT");
         status = WIFI_FAILURE;

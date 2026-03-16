@@ -20,9 +20,8 @@ static const char *TAG = "example";
 
 static led_strip_handle_t led_strip;
 
-QueueHandle_t color_queue;
 
-void led_set(bool on, rgb rgb)
+void led_set(bool on, rgb_t rgb)
 {
     /* If the addressable LED is enabled */
     if (on) {
@@ -42,6 +41,8 @@ void led_clear(led_strip_handle_t led) {
 
  void configure_led(uint8_t gpio) {
 
+    // color_queue = xQueueCreate(5, sizeof(rgb_t));
+
     ESP_LOGI(TAG, "Example configured to blink addressable LED!");
 
     led_strip_config_t strip_config = {
@@ -57,11 +58,11 @@ void led_clear(led_strip_handle_t led) {
     led_strip_clear(led_strip);
 }
 
-static void display_led(void) {
-    rgb color;
-    while (1) {
-        if (xQueueReceive(color_queue, &color, portMAX_DELAY) == pdTRUE) {
-            led_set(true, color);
-        }
-    }
-}
+// static void display_led(void) {
+//     rgb_t color;
+//     while (1) {
+//         if (xQueueReceive(color_queue, &color, portMAX_DELAY) == pdTRUE) {
+//             led_set(true, color);
+//         }
+//     }
+// }
