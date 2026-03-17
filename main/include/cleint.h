@@ -14,6 +14,7 @@
 
 typedef enum {
     CONNECTED = 0x01,
+    MSG = 0x02,
 } message_type_t;
 
 #define TCP_SUCCESS 1 << 0

@@ -9,6 +9,8 @@
 #include "lwip/sys.h"
 #include "lwip/netdb.h"
 #include "lwip/dns.h"
+#include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <strings.h>
 
@@ -41,6 +43,14 @@ esp_err_t connect_tcp_server(void) {
     }
     ESP_LOGI(TAG, "Connected to TCP server.");
     bzero(readBuffer, sizeof(readBuffer));
+    uint8_t test[2];
+    test[0] = 6;
+    test[1] =7;
+
+ int gg = send_data(sock, MSG, 2, test);
+
+    printf("send_data got: %d\n", gg);
+
     int r = read(sock, readBuffer, sizeof(readBuffer)-1);
     for(int i = 0; i < r; i++) {
         putchar(readBuffer[i]);
@@ -55,14 +65,27 @@ esp_err_t connect_tcp_server(void) {
 
 
 int send_data(int fd, message_type_t type, size_t len, const void *payload) {
-    uint8_t buf[4 + len];
+    uint8_t buf[6 + len];
 
     // magic (so the client no where to start from)
     buf[0] = 0xAA;
     buf[1] = 0x55;
+
     // version number
     buf[2] = 1; 
+
+    // type
     buf[3] = (uint8_t)type; 
 
-    return 0;
+    // len of payload
+    uint16_t net_len = htons((uint16_t)len);
+    memcpy(&buf[4], &net_len, 2);
+
+    // payload dah
+    memcpy(&buf[6], payload, len);
+
+    ssize_t n = send(fd, buf, 6 + len, 0);
+
+    return (n == 6 + len) ? 0 : -1;
+
 }
