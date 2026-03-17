@@ -52,3 +52,17 @@ esp_err_t connect_tcp_server(void) {
 
     return TCP_SUCCESS;
 }
+
+
+int send_data(int fd, message_type_t type, size_t len, const void *payload) {
+    uint8_t buf[4 + len];
+
+    // magic (so the client no where to start from)
+    buf[0] = 0xAA;
+    buf[1] = 0x55;
+    // version number
+    buf[2] = 1; 
+    buf[3] = (uint8_t)type; 
+
+    return 0;
+}
